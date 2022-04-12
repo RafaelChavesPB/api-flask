@@ -85,4 +85,6 @@ class UserRegister(Resource):
 
         query = "SELECT * FROM users"
         response = {user[1]:user[2] for user in cursor.execute(query)}
+        connection.close()
+        
         return jsonify(response)
