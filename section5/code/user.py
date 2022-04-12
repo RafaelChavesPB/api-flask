@@ -63,10 +63,14 @@ class UserRegister(Resource):
     
     def post(self):
         data = UserRegister.parser.parse_args()
+        
+        if User.find_by_username(data['username']):
+            return {"message":"A user with that username already exists"}, 400
 
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
         
+
         query = "INSERT INTO users VALUES (NULL, ?, ?)"
         cursor.execute(query, (data['username'], data['password']))
 
@@ -79,7 +83,6 @@ class UserRegister(Resource):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
-        query = "SELECT username FROM users"
-        cursor.execute(query)
-        response = {user[0]:user[0] for user in cursor.execute(query)}
+        query = "SELECT * FROM users"
+        response = {user[1]:user[2] for user in cursor.execute(query)}
         return jsonify(response)
